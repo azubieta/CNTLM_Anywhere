@@ -36,13 +36,15 @@ public:
 
 signals:
     void runningChanged(bool running);
+    void error(QString msg);
 
 public slots:
     void start();
     void stop();
 
 private:
-    static void cntlm_start(QString listen, QString user, QString password, QString proxy);
+    static void cntlm_start(QString listen, QString user, QString password, QString proxy, CntlmWrapper *instance);
+    static char ** QStringListToCharArray(const QStringList list);
     QString user;
     QString password;
     QString listen;

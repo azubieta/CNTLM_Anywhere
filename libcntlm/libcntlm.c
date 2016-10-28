@@ -661,7 +661,10 @@ bailout:
 	return NULL;
 }
 
-int start(int argc, char **argv) {
+int start(int argc, char **argv, char **errorMsg) {
+    *errorMsg = NULL;
+    int returnCode = 0;
+
 	char *tmp, *head;
 	char *cpassword, *cpassntlm2, *cpassnt, *cpasslm;
 	char *cuser, *cdomain, *cworkstation, *cuid, *cpidfile, *cauth;
@@ -883,41 +886,19 @@ int start(int argc, char **argv) {
 		i += (!tmp ? 2 : 1);
 	}
 
-	/*
-	 * No configuration file yet? Load the default.
-	 */
-#ifdef SYSCONFDIR
-	if (!cf) {
-#ifdef __CYGWIN__
-		tmp = getenv("PROGRAMFILES(X86)");
-		if (tmp == NULL || strlen(tmp) == 0)
-			tmp = getenv("PROGRAMFILES");
-		if (tmp == NULL)
-			tmp = "C:\\Program Files";
-
-		head = new(MINIBUF_SIZE);
-		strlcpy(head, tmp, MINIBUF_SIZE);
-		strlcat(head, "\\Cntlm\\cntlm.ini", MINIBUF_SIZE);
-		cf = config_open(head);
-#else
-		cf = config_open(SYSCONFDIR "/cntlm.conf");
-#endif
-		if (debug) {
-			if (cf)
-				printf("Default config file opened successfully\n");
-			else
-				syslog(LOG_ERR, "Could not open default config file\n");
-		}
-	}
-#endif
 
     if (!interactivehash && !parent_list) {
-		croak("Parent proxy address missing.\n", interactivepwd || magic_detect);
+        *errorMsg = "Parent proxy address missing.\n";
+        returnCode = 1;
+        croak(*errorMsg, interactivepwd || magic_detect);
         goto bailout;
+
     }
 
     if (!interactivehash && !magic_detect && !proxyd_list) {
-		croak("No proxy service ports were successfully opened.\n", interactivepwd);
+        *errorMsg = "No proxy service ports were successfully opened.\n";
+        returnCode = 1;
+        croak(*errorMsg, interactivepwd);
         goto bailout;
     }
 	/*
@@ -1407,5 +1388,5 @@ bailout:
     parent_count = 0;
 
     quit = 0;
-    return 0;
+    return returnCode;
 }

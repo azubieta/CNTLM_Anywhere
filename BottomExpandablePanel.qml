@@ -29,6 +29,8 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         source: "res/ic_btn_show.png"
 
+        visible: !details.fitInScreen
+
         transform: [
             Rotation {
                 id: xRot
@@ -63,6 +65,7 @@ Rectangle {
     }
 
     MouseArea {
+        enabled: !details.fitInScreen
         anchors.top: parent.top
         anchors.bottom: detailsController.bottom
         anchors.left: parent.left

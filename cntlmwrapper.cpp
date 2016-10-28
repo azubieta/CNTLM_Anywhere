@@ -1,6 +1,6 @@
 #include "cstdio"
 #include "cstdlib"
-#include "cstring"
+#include <cstring>
 
 #include <QtConcurrent/QtConcurrent>
 #include <QFutureWatcher>
@@ -59,7 +59,7 @@ void CntlmWrapper::start()
     running = true;
     Q_EMIT(runningChanged(running));
 
-    QFuture<void> f = QtConcurrent::run(cntlm_start, listen, user, password, proxy);
+    QFuture<void> f = QtConcurrent::run(cntlm_start, listen, user, password, proxy, this);
 
     QFutureWatcher<void> *watcher = new QFutureWatcher<void>();
     watcher->setFuture(f);
@@ -77,21 +77,50 @@ void CntlmWrapper::stop()
     libcntlm::stop();
 }
 
-void CntlmWrapper::cntlm_start(QString listen, QString user, QString password, QString proxy)
+void CntlmWrapper::cntlm_start(QString listen, QString user, QString password, QString proxy, CntlmWrapper *instance)
 {
-    char * argsStr = (char*) malloc(sizeof(char) * 1024);
-    sprintf(argsStr, "cntlm -vfl %s -u %s -p %s %s", listen.toLatin1().data(), user.toLatin1().data(), password.toLatin1().data(), proxy.toLatin1().data());
+    //char * argsStr = (char*) malloc(sizeof(char) * 1024);
+//    sprintf(argsStr, "cntlm -vfl %s -u \"%s\" -p \"%s\" %s", listen.toLatin1().data(), user.toLatin1().data(), password.toLatin1().data(), proxy.toLatin1().data());
+    QStringList argsList;
+    argsList << "cntlm" << "-vfl" << listen << "-u" << user << "-p" << password << proxy;
 
-    qDebug() << argsStr;
-    char ** cntlm_args = NULL;
-    int argc = libcntlm::strsplit(argsStr, ' ', &cntlm_args);
+    qDebug() << argsList;
+    char ** cntlm_args = QStringListToCharArray(argsList);
+    char * errorMsg = NULL;
+    int argc = argsList.size();
     qDebug() << "Starting with "<< argc << "args ";
-    /*for(int i = 0; i < argc; i ++)
-        qDebug() << cntlm_args[i];*/
+//    for(int i = 0; i < argc; i ++)
+//        qDebug() << cntlm_args[i];
 
-    int result = libcntlm::start(argc, cntlm_args);
-    free(argsStr);
+    int result = libcntlm::start(argc, cntlm_args, &errorMsg);
+    for(int i = 0; i < argc; i ++)
+        delete(cntlm_args[i]);
+    delete cntlm_args;
+
+    if (result != 0 && errorMsg != NULL) {
+        QString errorString(errorMsg);
+        emit( instance->error( errorString ) ) ;
+    }
+
     qDebug() << "ended" << result;
+}
+
+char **CntlmWrapper::QStringListToCharArray(const QStringList list)
+{
+    int i =0;
+    int size = list.size();
+    char ** c = new char *[size];
+
+    for (QString s : list) {
+        const char* byteArray = s.toLocal8Bit().constData();
+        int len = strlen(byteArray);
+        c[i] = new char[len + 1];
+        strcpy(c[i], byteArray);
+        c[i][len] = '\0';
+        i++;
+    }
+
+    return c;
 }
 
 bool CntlmWrapper::getMemorizeSettings() const

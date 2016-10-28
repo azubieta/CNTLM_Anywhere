@@ -30,6 +30,7 @@ Window {
 
         property int contentWidth: 200 * scaleFactor
         property int fontPointSize: 16 * scaleFactor
+        property int fontPointSizeSmall: 12 * scaleFactor
         property int iconSizeMedium: 24 * scaleFactor
         property int iconSizeLarge: 64 * scaleFactor
         property int marginSmall: 12 * scaleFactor
@@ -177,7 +178,7 @@ Window {
                 }
             }
 
-            enabled: !details.expanded
+            // enabled: !details.expanded
             checked: Cntlm.running
             text: Cntlm.running ? qsTr("DETENER") : qsTr("INICIAR")
             onClicked: {
@@ -233,6 +234,69 @@ Window {
                     Layout.maximumWidth: parent.width
                     wrapMode: Text.WordWrap
                 }
+            }
+        }
+    }
+
+    Dialog {
+        id: errorDialog
+        property alias message: innerText.text
+        visible: false
+        title: "Error"
+        contentItem: Rectangle {
+            color: "#FF4081"
+
+            implicitHeight: root.height - (root.height / 4)
+            implicitWidth: root.width - (root.width / 4)
+
+            ColumnLayout {
+                anchors.fill: parent
+                anchors.margins: style.marginLarge
+                spacing: style.marginLarge
+                Text {
+                    color: "white"
+                    text: "Ups, algo fue mal ... "
+                    font.pixelSize: style.fontPointSize
+                    Layout.maximumWidth: parent.width
+                    wrapMode: Text.WordWrap
+                }
+
+                Text {
+                    id: innerText
+                    color: "white"
+                    font.pixelSize: style.fontPointSizeSmall
+                    Layout.maximumWidth: parent.width
+                    Layout.fillHeight: true;
+                    wrapMode: Text.WordWrap
+                }
+
+                Text {
+                    color: "white"
+                    text: "Inténtelo nuevamente ;)"
+                    font.pixelSize: style.fontPointSize
+                    Layout.maximumWidth: parent.width
+                    wrapMode: Text.WordWrap
+                }
+                Text {
+                    color: "white"
+                    text: "Si el problema periste reporte el error."
+                    font.pixelSize: style.fontPointSizeSmall
+                    Layout.maximumWidth: parent.width
+                    wrapMode: Text.WordWrap
+                }
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                onClicked: errorDialog.visible = false
+            }
+        }
+
+        Connections {
+            target: Cntlm
+            onError: {
+                errorDialog.message = msg
+                errorDialog.visible = true
             }
         }
     }

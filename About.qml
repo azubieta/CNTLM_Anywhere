@@ -7,16 +7,22 @@ Rectangle {
     color: "#3F51B5"
     ColumnLayout {
         anchors.fill: parent
-        anchors.margins: 18
+        anchors.margins: style.marginLarge
         Text {
             text: "Acerca de CNTLM Anywhere"
             color: "white"
             wrapMode: Text.WordWrap
             Layout.maximumWidth: parent.width
         }
+        Text {
+            text: "CNTLM Anywhere es un empaquetado de cntlm para múltiples plataformas."
+            color: "white"
+            wrapMode: Text.WordWrap
+            Layout.maximumWidth: parent.width
+        }
 
         Text {
-            text: "Desarrollado por:\nAlexis López Zubieta <azubieta90[at]gmail[dot]com>"
+            text: "Desarrollado por:\nAlexis López Zubieta"
             color: "white"
             wrapMode: Text.WordWrap
             Layout.maximumWidth: parent.width
