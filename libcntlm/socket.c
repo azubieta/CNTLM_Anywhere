@@ -175,7 +175,7 @@ int so_listen(int port, struct in_addr source) {
 	}
 
 	clen = 1;
-    if (setsockopt(fd, SOL_SOCKET, (SO_REUSEADDR | SO_REUSEPORT), &clen, sizeof(clen))) {
+    if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &clen, sizeof(clen))) {
         perror("setsockopt");
         return -1;
     }

@@ -3,118 +3,153 @@ import QtQuick.Window 2.0
 import QtQuick.Layouts 1.1
 import QtQuick.Controls 1.3
 import QtQuick.Controls.Styles 1.2
+import QtQuick.Dialogs 1.2
 
-import cu.uci.cntlm 1.0
+import cu.uci.cntlmanywhere 1.0
 
 Window {
+    id: root
     visible: true
-
     title: "Cntlm Anywhere"
-    height: content.implicitHeight + 70
-    width: content.width + 40
     color: "#3F51B5"
 
-    ColumnLayout {
-        id: content
+    Item {
+        id: style
+        property int scaleFactor: {
+            if (Qt.platform.os != "android" && Qt.platform.os != "ios"
+                    && Qt.platform.os != "blackberry")
+                return 1
+
+            if (Screen.PixelDensity < 40)
+                return 1
+            else if (Screen.PixelDensity > 300)
+                return 4
+            else
+                return 2
+        }
+
+        property int contentWidth: 200 * scaleFactor
+        property int fontPointSize: 16 * scaleFactor
+        property int iconSizeMedium: 24 * scaleFactor
+        property int iconSizeLarge: 64 * scaleFactor
+        property int marginSmall: 12 * scaleFactor
+        property int marginLarge: 18 * scaleFactor
+    }
+
+    RowLayout {
+        id: header
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.margins: 18
-        width: 250
+        anchors.margins: style.marginLarge
 
-        RowLayout {
-            Layout.fillWidth: true
-            Layout.alignment: Qt.AlignHCenter
-            id: header
+        Image {
+            id: logo
+            Layout.alignment: Qt.AlignLeft
+            Layout.maximumWidth: style.iconSizeLarge
+            Layout.maximumHeight: style.iconSizeLarge
+            source: "res/Icon.png"
 
-            Image {
-                id: logo
-                Layout.alignment: Qt.AlignLeft
-                Layout.maximumWidth: 64
-                Layout.maximumHeight: 64
-                source: "res/Icon.png"
+            MouseArea {
+                anchors.fill: parent
+                onClicked: aboutDialog.visible = !aboutDialog.visible
             }
+        }
+        Label {
+            text: qsTr("Cntlm Anywhere")
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignLeft
+            font.pixelSize: style.fontPointSize
+            color: "white"
+        }
+        Image {
+            id: helpButton
+
+            visible: false
+            Layout.maximumWidth: style.iconSizeLarge
+            Layout.maximumHeight: style.iconSizeLarge
+            Layout.alignment: Qt.AlignRight
+            source: "res/ic_help_white_48dp.png"
+        }
+    }
+
+    ColumnLayout {
+        id: mainControls
+        anchors.top: header.bottom
+
+        anchors.horizontalCenter: parent.horizontalCenter
+        width: style.contentWidth
+        spacing: style.marginLarge
+
+        ColumnLayout {
+            Layout.fillWidth: true
             Label {
-                text: qsTr("Cntlm Anywhere")
-                Layout.fillWidth: true
-                Layout.alignment: Qt.AlignLeft
-                font.pixelSize: 22
+                text: qsTr("Usuario:")
+                //            Layout.leftMargin: 6
+                font.pixelSize: style.fontPointSize
                 color: "white"
             }
-            Image {
-                id: helpButton
 
-                visible: false
-                Layout.maximumWidth: 44
-                Layout.maximumHeight: 44
-                Layout.alignment: Qt.AlignRight
-                source: "res/ic_help_white_48dp.png"
-            }
-        }
-
-        Label {
-            text: qsTr("Usuario:")
-            Layout.leftMargin: 6
-            font.pixelSize: 16
-            color: "white"
-        }
-
-        TextField {
-            id: userTextField
-            Layout.fillWidth: true
-            font.pixelSize: 16
-            style: FancyTextFieldStyle {
-                selected: userTextField.activeFocus
-                wrong: !userTextField.acceptableInput;
-            }
-
-            text: Cntlm.user
-            onEditingFinished: Cntlm.user = text
-            placeholderText: qsTr("user@domain.com")
-            enabled: !Cntlm.running
-        }
-
-        Label {
-            text: qsTr("Contraseña:")
-            Layout.topMargin: 18
-            Layout.leftMargin: 6
-            font.pixelSize: 16
-            color: "white"
-        }
-
-        Item {
-            Layout.fillWidth: true
-            height: passwordTextField.implicitHeight
-            width: passwordTextField.implicitWidth
             TextField {
-                id: passwordTextField
-
-                anchors.fill: parent
-                font.pixelSize: 16
+                id: userTextField
+                Layout.fillWidth: true
+                font.pixelSize: style.fontPointSize
                 style: FancyTextFieldStyle {
-                    selected: passwordTextField.activeFocus
-                    wrong: !passwordTextField.acceptableInput;
+                    selected: userTextField.activeFocus
+                    wrong: !userTextField.acceptableInput
                 }
-                text: Cntlm.password
-                onEditingFinished: Cntlm.password = text
-                placeholderText: qsTr("Your Password")
-                echoMode: TextInput.Password
+
+                text: Cntlm.user
+                onEditingFinished: Cntlm.user = text
+                placeholderText: qsTr("user@domain.com")
                 enabled: !Cntlm.running
             }
+        }
 
-            Image {
-                id: showPasswordImage
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.right: parent.right
-                anchors.rightMargin: 6
-                height: 24
-                width: 24
-                source: passwordTextField.echoMode
-                        == TextInput.Password ? "res/ic_pass_show.png" : "res/ic_pass_hide.png"
+        ColumnLayout {
+            Layout.fillWidth: true
+            Label {
+                text: qsTr("Contraseña:")
+                //             Layout.topMargin: 18
+                //             Layout.leftMargin: 6
+                font.pixelSize: style.fontPointSize
+                color: "white"
+            }
 
-                MouseArea {
+            Item {
+                Layout.fillWidth: true
+                height: passwordTextField.implicitHeight
+                // width: passwordTextField.implicitWidth
+                TextField {
+                    id: passwordTextField
+
                     anchors.fill: parent
-                    onPressed: passwordTextField.echoMode = TextInput.Normal
-                    onReleased: passwordTextField.echoMode = TextInput.Password
+                    font.pixelSize: style.fontPointSize
+                    style: FancyTextFieldStyle {
+                        selected: passwordTextField.activeFocus
+                        wrong: !passwordTextField.acceptableInput
+                    }
+                    text: Cntlm.password
+                    onEditingFinished: Cntlm.password = text
+                    placeholderText: qsTr("Your Password")
+                    echoMode: TextInput.Password
+                    enabled: !Cntlm.running
+                }
+
+                Image {
+                    id: showPasswordImage
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.right: parent.right
+                    anchors.rightMargin: 6
+                    height: style.iconSizeMedium
+                    width: style.iconSizeMedium
+                    source: passwordTextField.echoMode
+                            == TextInput.Password ? "res/ic_pass_show.png" : "res/ic_pass_hide.png"
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onPressed: passwordTextField.echoMode = TextInput.Normal
+                        onReleased: passwordTextField.echoMode = TextInput.Password
+                    }
                 }
             }
         }
@@ -122,12 +157,12 @@ Window {
         Button {
             id: controlButton
             height: 40
-            Layout.topMargin: 18
+            //            Layout.topMargin: 18
             Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
             style: ButtonStyle {
                 background: Rectangle {
-                    implicitWidth: 220
-                    implicitHeight: 34
+                    implicitWidth: style.contentWidth - (15 * style.scaleFactor)
+                    implicitHeight: implicitWidth / 6
                     radius: 25
                     color: Cntlm.running ? "#4CAE50" : "#9E9E9E"
                 }
@@ -136,7 +171,7 @@ Window {
                     verticalAlignment: Text.AlignVCenter
                     horizontalAlignment: Text.AlignHCenter
                     font.family: "Helvetica"
-                    font.pointSize: 14
+                    //font.pointSize: style.fontPointSize
                     color: "white"
                     text: control.text
                 }
@@ -158,43 +193,58 @@ Window {
     BottomExpandablePanel {
         id: details
         content: detailsFields
+        fitInScreen: mainControls.height * 2 < root.height
     }
 
     Component {
         id: detailsFields
-        ColumnLayout {
-            width: content.width
-            Label {
-                text: qsTr("Proxy")
-                Layout.leftMargin: 6
-                font.pixelSize: 16
-            }
-            TextField {
-                id: proxyTextField
-                style: FancyTextFieldStyle {
-                    selected: proxyTextField.activeFocus
-                    wrong: !proxyTextField.acceptableInput;
-                    dark: false
+        ScrollView {
+            implicitWidth: mainControls.width
+            ColumnLayout {
+                width: mainControls.width
+                Label {
+                    text: qsTr("Proxy")
+                    //                Layout.leftMargin: 6
+                    //font.pixelSize: style.fontPointSize
                 }
-                inputMask: "000.000.000.000:00000"
-                Layout.fillWidth: true
-                font.pixelSize: 16
-                text: Cntlm.proxy
-                onEditingFinished: Cntlm.proxy = text
-                placeholderText: qsTr("10.0.0.1:8080")
-                enabled: !Cntlm.running
-            }
+                TextField {
+                    id: proxyTextField
+                    style: FancyTextFieldStyle {
+                        selected: proxyTextField.activeFocus
+                        wrong: !proxyTextField.acceptableInput
+                        dark: false
+                    }
+                    inputMask: "000.000.000.000:00000"
+                    Layout.fillWidth: true
+                    //font.pixelSize: style.fontPointSize
+                    text: Cntlm.proxy
+                    onEditingFinished: Cntlm.proxy = text
+                    placeholderText: qsTr("10.0.0.1:8080")
+                    enabled: !Cntlm.running
+                }
 
-            Label {
-                id: statusMessage
+                Label {
+                    id: statusMessage
 
-                text: qsTr("CNTLM en ejecución, establezca como proxy para su sistema: \""
-                           + Cntlm.listen + "\"")
-                visible: Cntlm.running
-                Layout.topMargin: 18
-                Layout.maximumWidth: parent.width
-                wrapMode: Text.WordWrap
+                    text: qsTr("CNTLM en ejecución, establezca como proxy para su sistema: \""
+                               + Cntlm.listen + "\"")
+                    visible: Cntlm.running
+                    //                Layout.topMargin: 18
+                    Layout.maximumWidth: parent.width
+                    wrapMode: Text.WordWrap
+                }
             }
+        }
+    }
+
+    Dialog {
+        id: aboutDialog
+        title: "Acerca de Cntlm Anywhere"
+        contentItem: About {
+            implicitHeight: root.height - (root.height / 4)
+            implicitWidth: root.width - (root.width / 4)
+
+            onDispose: aboutDialog.visible = false
         }
     }
 }

@@ -3,5 +3,6 @@
         <file>main.qml</file>
         <file>FancyTextFieldStyle.qml</file>
         <file>BottomExpandablePanel.qml</file>
+        <file>About.qml</file>
     </qresource>
 </RCC>
