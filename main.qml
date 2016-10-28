@@ -304,6 +304,7 @@ Window {
     Dialog {
         id: aboutDialog
         title: "Acerca de Cntlm Anywhere"
+
         contentItem: About {
             implicitHeight: root.height - (root.height / 4)
             implicitWidth: root.width - (root.width / 4)

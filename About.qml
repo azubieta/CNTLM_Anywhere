@@ -5,6 +5,12 @@ import QtQuick.Controls 1.2
 Rectangle {
     signal dispose
     color: "#3F51B5"
+
+    MouseArea {
+        anchors.fill: parent
+        onReleased: {dispose(); mouse.accepted = true}
+    }
+
     ColumnLayout {
         anchors.fill: parent
         anchors.margins: style.marginLarge
@@ -22,14 +28,7 @@ Rectangle {
         }
 
         Text {
-            text: "Desarrollado por:\nAlexis López Zubieta"
-            color: "white"
-            wrapMode: Text.WordWrap
-            Layout.maximumWidth: parent.width
-        }
-
-        Text {
-            text: "Diseñado por:\nYulio Alemán Jimenez"
+            text: "Desarrollado por:\nAlexis López Zubieta\nDiseñado por:\nYulio Alemán Jimenez"
             color: "white"
             wrapMode: Text.WordWrap
             Layout.maximumWidth: parent.width
@@ -41,9 +40,21 @@ Rectangle {
             wrapMode: Text.WordWrap
             Layout.maximumWidth: parent.width
         }
-    }
-    MouseArea {
-        anchors.fill: parent
-        onClicked: dispose()
+
+        RowLayout {
+            Layout.alignment: Qt.AlignHCenter
+            Layout.fillWidth: true;
+            Image {
+                id: gihub
+                source: "res/GitHub-Mark.png"
+                Layout.maximumWidth: style.iconSizeLarge
+                Layout.maximumHeight: style.iconSizeLarge
+
+                MouseArea {
+                    anchors.fill: gihub;
+                    onPressed: {mouse.accepted = true; print("github"); Qt.openUrlExternally("https://github.com/azubieta/cntlm_anywhere");}
+                }
+            }
+        }
     }
 }
