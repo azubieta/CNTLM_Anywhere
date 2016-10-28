@@ -17,8 +17,6 @@ class CntlmWrapper : public QObject
 public:
     explicit CntlmWrapper(QObject *parent = 0);
 
-
-
     QString getUser() const;
     void setUser(const QString &value);
 

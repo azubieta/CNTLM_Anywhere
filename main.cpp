@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
     QGuiApplication::setOrganizationName("Project42");
     QGuiApplication::setOrganizationDomain("uci.cu");
-    QGuiApplication::setApplicationName("CntlmPlus");
+    QGuiApplication::setApplicationName("CntlmAnywhere");
 
 
     qmlRegisterSingletonType<CntlmWrapper>("cu.uci.cntlm", 1, 0, "Cntlm", cntlmwrapper_singletontype_provider);

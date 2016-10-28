@@ -9,7 +9,7 @@ import cu.uci.cntlm 1.0
 Window {
     visible: true
 
-    title: "Cntlm Plus"
+    title: "Cntlm Anywhere"
     height: content.implicitHeight + 70
     width: content.width + 40
     color: "#3F51B5"
@@ -17,7 +17,6 @@ Window {
     ColumnLayout {
         id: content
         anchors.top: parent.top
-        // anchors.bottom: details.top
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.margins: 18
         width: 250
@@ -35,7 +34,7 @@ Window {
                 source: "res/Icon.png"
             }
             Label {
-                text: qsTr("Cntlm Everywhere")
+                text: qsTr("Cntlm Anywhere")
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignLeft
                 font.pixelSize: 22
@@ -65,6 +64,7 @@ Window {
             font.pixelSize: 16
             style: FancyTextFieldStyle {
                 selected: userTextField.activeFocus
+                wrong: !userTextField.acceptableInput;
             }
 
             text: Cntlm.user
@@ -92,6 +92,7 @@ Window {
                 font.pixelSize: 16
                 style: FancyTextFieldStyle {
                     selected: passwordTextField.activeFocus
+                    wrong: !passwordTextField.acceptableInput;
                 }
                 text: Cntlm.password
                 onEditingFinished: Cntlm.password = text
@@ -172,9 +173,10 @@ Window {
                 id: proxyTextField
                 style: FancyTextFieldStyle {
                     selected: proxyTextField.activeFocus
+                    wrong: !proxyTextField.acceptableInput;
                     dark: false
                 }
-
+                inputMask: "000.000.000.000:00000"
                 Layout.fillWidth: true
                 font.pixelSize: 16
                 text: Cntlm.proxy
