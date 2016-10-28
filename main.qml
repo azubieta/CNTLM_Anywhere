@@ -13,6 +13,12 @@ Window {
     title: "Cntlm Anywhere"
     color: "#3F51B5"
 
+    Component.onCompleted: {
+        if (Qt.platform.os == "linux" || Qt.platform.os == "windows")
+            root.height = 600;
+            root.width = 300;
+    }
+
     Item {
         id: style
         property int scaleFactor: {
