@@ -1,4 +1,3 @@
-#include <QtQml>
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 
@@ -15,17 +14,13 @@ static QObject *cntlmwrapper_singletontype_provider(QQmlEngine *engine, QJSEngin
 
 int main(int argc, char *argv[])
 {
+    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QGuiApplication app(argc, argv);
-    QGuiApplication::setOrganizationName("Project42");
-    QGuiApplication::setOrganizationDomain("uci.cu");
-    QGuiApplication::setApplicationName("Cntlm Anywhere");
-
 
     qmlRegisterSingletonType<CntlmWrapper>("cu.uci.cntlmanywhere", 1, 0, "Cntlm", cntlmwrapper_singletontype_provider);
 
     QQmlApplicationEngine engine;
-    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
+    engine.load(QUrl(QLatin1String("qrc:/src/qml/main.qml")));
 
     return app.exec();
 }
-

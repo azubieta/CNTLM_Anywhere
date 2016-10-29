@@ -1,61 +1,46 @@
-import QtQuick 2.4
 import QtQuick.Window 2.0
+import QtQuick 2.7
 import QtQuick.Layouts 1.1
-import QtQuick.Controls 1.3
-import QtQuick.Controls.Styles 1.2
+import QtQuick.Controls 1.4
+import QtQuick.Controls 1.4
+import QtQuick.Controls.Styles 1.4
 import QtQuick.Dialogs 1.2
 
 import cu.uci.cntlmanywhere 1.0
 
-Window {
+ApplicationWindow {
     id: root
     visible: true
     title: "Cntlm Anywhere"
     color: "#3F51B5"
-
-    Component.onCompleted: {
-        if (Qt.platform.os == "linux" || Qt.platform.os == "windows") {
-            root.height = 600;
-            root.width = 300;
-        }
-    }
+    height: 600
+    width: 300
 
     Item {
         id: style
-        property int scaleFactor: {
-            if (Qt.platform.os != "android" && Qt.platform.os != "ios"
-                    && Qt.platform.os != "blackberry")
-                return 1
 
-            if (Screen.PixelDensity < 40)
-                return 1
-            else if (Screen.PixelDensity > 300)
-                return 4
-            else
-                return 2
-        }
-
-        property int contentWidth: 200 * scaleFactor
-        property int fontPointSize: 16 * scaleFactor
-        property int fontPointSizeSmall: 12 * scaleFactor
-        property int iconSizeMedium: 24 * scaleFactor
-        property int iconSizeLarge: 64 * scaleFactor
-        property int marginSmall: 12 * scaleFactor
-        property int marginLarge: 18 * scaleFactor
+        property int contentWidth: 260
+        property int fontPointSize: 16
+        property int fontPointSizeSmall: 12
+        property int fontPointSizeLarge: 24
+        property int iconSizeMedium: 24
+        property int iconSizeLarge: 64
+        property int marginSmall: 12
+        property int marginLarge: 18
     }
 
     RowLayout {
         id: header
+        width: style.contentWidth
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.margins: style.marginLarge
 
         Image {
             id: logo
             Layout.alignment: Qt.AlignLeft
             Layout.maximumWidth: style.iconSizeLarge
             Layout.maximumHeight: style.iconSizeLarge
-            source: "res/Icon.png"
+            source: "qrc:/res/drawable/generic/icon.png"
 
             MouseArea {
                 anchors.fill: parent
@@ -66,17 +51,8 @@ Window {
             text: qsTr("Cntlm Anywhere")
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignLeft
-            font.pixelSize: style.fontPointSize
+            font.pixelSize: style.fontPointSizeLarge
             color: "white"
-        }
-        Image {
-            id: helpButton
-
-            visible: false
-            Layout.maximumWidth: style.iconSizeLarge
-            Layout.maximumHeight: style.iconSizeLarge
-            Layout.alignment: Qt.AlignRight
-            source: "res/ic_help_white_48dp.png"
         }
     }
 
@@ -92,7 +68,7 @@ Window {
             Layout.fillWidth: true
             Label {
                 text: qsTr("Usuario:")
-                //            Layout.leftMargin: 6
+                Layout.leftMargin: 6
                 font.pixelSize: style.fontPointSize
                 color: "white"
             }
@@ -105,10 +81,12 @@ Window {
                     selected: userTextField.activeFocus
                     wrong: !userTextField.acceptableInput
                 }
-
                 text: Cntlm.user
+                validator: RegExpValidator {
+                    regExp: /^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$/
+                }
                 onEditingFinished: Cntlm.user = text
-                placeholderText: qsTr("user@domain.com")
+                placeholderText: qsTr("usuario@dominio.org")
                 enabled: !Cntlm.running
             }
         }
@@ -117,8 +95,8 @@ Window {
             Layout.fillWidth: true
             Label {
                 text: qsTr("Contraseña:")
-                //             Layout.topMargin: 18
-                //             Layout.leftMargin: 6
+                Layout.topMargin: 18
+                Layout.leftMargin: 6
                 font.pixelSize: style.fontPointSize
                 color: "white"
             }
@@ -126,7 +104,6 @@ Window {
             Item {
                 Layout.fillWidth: true
                 height: passwordTextField.implicitHeight
-                // width: passwordTextField.implicitWidth
                 TextField {
                     id: passwordTextField
 
@@ -138,7 +115,7 @@ Window {
                     }
                     text: Cntlm.password
                     onEditingFinished: Cntlm.password = text
-                    placeholderText: qsTr("Your Password")
+                    placeholderText: qsTr("Su contraseña")
                     echoMode: TextInput.Password
                     enabled: !Cntlm.running
                 }
@@ -150,8 +127,7 @@ Window {
                     anchors.rightMargin: 6
                     height: style.iconSizeMedium
                     width: style.iconSizeMedium
-                    source: passwordTextField.echoMode
-                            == TextInput.Password ? "res/ic_pass_show.png" : "res/ic_pass_hide.png"
+                    source: passwordTextField.echoMode == TextInput.Password ? "qrc:/res/drawable/generic/ic_pass_show.png" : "qrc:/res/drawable/generic/ic_pass_hide.png"
 
                     MouseArea {
                         anchors.fill: parent
@@ -164,28 +140,24 @@ Window {
 
         Button {
             id: controlButton
-            height: 40
-            //            Layout.topMargin: 18
+            Layout.topMargin: 18
+            Layout.maximumHeight: 34
             Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+
             style: ButtonStyle {
                 background: Rectangle {
-                    implicitWidth: style.contentWidth - (15 * style.scaleFactor)
+                    implicitWidth: style.contentWidth - 15
                     implicitHeight: implicitWidth / 6
-                    radius: 25
+                    radius: 28
                     color: Cntlm.running ? "#4CAE50" : "#9E9E9E"
                 }
                 label: Text {
-                    renderType: Text.NativeRendering
                     verticalAlignment: Text.AlignVCenter
                     horizontalAlignment: Text.AlignHCenter
-                    font.family: "Helvetica"
-                    //font.pointSize: style.fontPointSize
                     color: "white"
                     text: control.text
                 }
             }
-
-            // enabled: !details.expanded
             checked: Cntlm.running
             text: Cntlm.running ? qsTr("DETENER") : qsTr("INICIAR")
             onClicked: {
@@ -212,19 +184,20 @@ Window {
                 width: mainControls.width
                 Label {
                     text: qsTr("Proxy")
-                    //                Layout.leftMargin: 6
-                    //font.pixelSize: style.fontPointSize
+                    Layout.leftMargin: 6
                 }
                 TextField {
                     id: proxyTextField
+
                     style: FancyTextFieldStyle {
                         selected: proxyTextField.activeFocus
                         wrong: !proxyTextField.acceptableInput
                         dark: false
                     }
-                    inputMask: "000.000.000.000:00000"
+                    validator: RegExpValidator {
+                        regExp: /((([a-z0-9]+(-[a-z0-9]+)*\.?)+[a-z]{2,})|(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}))(:(\d{1,5}))/
+                    }
                     Layout.fillWidth: true
-                    //font.pixelSize: style.fontPointSize
                     text: Cntlm.proxy
                     onEditingFinished: Cntlm.proxy = text
                     placeholderText: qsTr("10.0.0.1:8080")
@@ -262,7 +235,7 @@ Window {
                 spacing: style.marginLarge
                 Text {
                     color: "white"
-                    text: "Ups, algo fue mal ... "
+                    text: qsTr("Ups, algo fue mal ... ")
                     font.pixelSize: style.fontPointSize
                     Layout.maximumWidth: parent.width
                     wrapMode: Text.WordWrap
@@ -273,7 +246,7 @@ Window {
                     color: "white"
                     font.pixelSize: style.fontPointSizeSmall
                     Layout.maximumWidth: parent.width
-                    Layout.fillHeight: true;
+                    Layout.fillHeight: true
                     wrapMode: Text.WordWrap
                 }
 
@@ -286,7 +259,7 @@ Window {
                 }
                 Text {
                     color: "white"
-                    text: "Si el problema periste reporte el error."
+                    text: qsTr("Si el problema periste reporte el error.")
                     font.pixelSize: style.fontPointSizeSmall
                     Layout.maximumWidth: parent.width
                     wrapMode: Text.WordWrap
@@ -310,7 +283,7 @@ Window {
 
     Dialog {
         id: aboutDialog
-        title: "Acerca de Cntlm Anywhere"
+        title: qsTr("Acerca de Cntlm Anywhere")
 
         contentItem: About {
             implicitHeight: root.height - (root.height / 4)

@@ -1,9 +1,10 @@
-TEMPLATE = app
-
 QT += qml quick
+
 CONFIG += c++11
 
-SOURCES += main.cpp \
+SOURCES += \
+    src/main.cpp \
+    src/cntlmwrapper.cpp \
     libcntlm/acl.c \
     libcntlm/auth.c \
     libcntlm/config.c \
@@ -16,10 +17,10 @@ SOURCES += main.cpp \
     libcntlm/socket.c \
     libcntlm/utils.c \
     libcntlm/xcrypt.c \
-    libcntlm/libcntlm.c \
-    cntlmwrapper.cpp
+    libcntlm/libcntlm.c
 
 HEADERS += \
+    src/cntlmwrapper.h\
     libcntlm/acl.h \
     libcntlm/auth.h \
     libcntlm/config.h \
@@ -35,10 +36,10 @@ HEADERS += \
     libcntlm/utils.h \
     libcntlm/xcrypt.h \
     libcntlm/libcntlm.h \
-    cntlmwrapper.h
+
 
 RESOURCES += qml.qrc \
-    drawables.qrc
+    res.qrc
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
@@ -56,4 +57,3 @@ DISTFILES += \
     android/gradlew.bat
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
-

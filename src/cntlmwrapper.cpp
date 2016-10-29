@@ -18,8 +18,8 @@ CntlmWrapper::CntlmWrapper(QObject *parent) : QObject(parent)
 
     QSettings settings;
     listen = settings.value("listen", "8080").toString();
-    user = settings.value("user", "user@domain.com").toString();
-    password = settings.value("password", "SimplePassword").toString();
+    user = settings.value("user", "").toString();
+    password = settings.value("password", "").toString();
     proxy = settings.value("proxy", "10.0.0.1:8080").toString();
 
     running = false;

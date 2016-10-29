@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/">
+        <file>res/drawable/generic/github_mark.png</file>
+        <file>res/drawable/generic/ic_btn_hide.png</file>
+        <file>res/drawable/generic/ic_btn_show.png</file>
+        <file>res/drawable/generic/ic_pass_hide.png</file>
+        <file>res/drawable/generic/ic_pass_show.png</file>
+        <file>res/drawable/generic/icon.png</file>
+        <file>res/drawable/generic/off.png</file>
+        <file>res/drawable/generic/on.png</file>
+    </qresource>
+</RCC>

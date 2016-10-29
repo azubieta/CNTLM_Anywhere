@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.5
 
 Rectangle {
     id: details
@@ -27,7 +27,7 @@ Rectangle {
         anchors.top: parent.top
         anchors.topMargin: 10
         anchors.horizontalCenter: parent.horizontalCenter
-        source: "res/ic_btn_show.png"
+        source: "qrc:/res/drawable/generic/ic_btn_show.png"
 
         visible: !details.fitInScreen
 
@@ -77,8 +77,8 @@ Rectangle {
         name: "expanded"
         PropertyChanges {
             target: details
-            y: (details.fitInScreen ? mainControls.y + mainControls.height : header.y
-                                      + header.height) + 18
+            y: details.fitInScreen ? mainControls.y + mainControls.height  + 18 : header.y
+                                      + header.height
         }
 
         when: details.expanded

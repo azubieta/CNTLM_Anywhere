@@ -1,8 +1,8 @@
 <RCC>
     <qresource prefix="/">
-        <file>main.qml</file>
-        <file>FancyTextFieldStyle.qml</file>
-        <file>BottomExpandablePanel.qml</file>
-        <file>About.qml</file>
+        <file>src/qml/About.qml</file>
+        <file>src/qml/BottomExpandablePanel.qml</file>
+        <file>src/qml/FancyTextFieldStyle.qml</file>
+        <file>src/qml/main.qml</file>
     </qresource>
 </RCC>

@@ -1,9 +1,9 @@
 buildscript {
     repositories {
-        // jcenter()
-        maven {
-            url 'http://maven.prod.uci.cu/nexus/content/repositories/central/'
-        }
+    // jcenter()
+    maven {
+        url 'http://nexus.prod.uci.cu/repository/maven-central/'
+    }
     }
 
     dependencies {
