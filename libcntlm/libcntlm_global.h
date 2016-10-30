@@ -1,0 +1,12 @@
+#ifndef LIBCNTLM_GLOBAL_H
+#define LIBCNTLM_GLOBAL_H
+
+#include <QtCore/qglobal.h>
+
+#if defined(LIBCNTLM_LIBRARY)
+#  define LIBCNTLMSHARED_EXPORT Q_DECL_EXPORT
+#else
+#  define LIBCNTLMSHARED_EXPORT Q_DECL_IMPORT
+#endif
+
+#endif // LIBCNTLM_GLOBAL_H

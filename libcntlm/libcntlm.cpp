@@ -1,5 +1,7 @@
-#include "cstdio"
-#include "cstdlib"
+#include "libcntlm.h"
+
+#include <cstdio>
+#include <cstdlib>
 #include <cstring>
 
 #include <QtConcurrent/QtConcurrent>
@@ -9,11 +11,14 @@
 
 #include <QDebug>
 
-#include "cntlmwrapper.h"
 
-#include "libcntlm/libcntlm.h"
+namespace ccntlm {
+    extern "C" int start(int argc, char *argv[], char **errorMsg);
+    extern "C" void stop();
+}
 
-CntlmWrapper::CntlmWrapper(QObject *parent) : QObject(parent)
+
+Libcntlm::Libcntlm(QObject *parent) : QObject(parent)
 {
 
     QSettings settings;
@@ -25,27 +30,27 @@ CntlmWrapper::CntlmWrapper(QObject *parent) : QObject(parent)
     running = false;
 }
 
-QString CntlmWrapper::getUser() const
+QString Libcntlm::getUser() const
 {
     return user;
 }
 
-void CntlmWrapper::setUser(const QString &value)
+void Libcntlm::setUser(const QString &value)
 {
     user = value;
 }
 
-QString CntlmWrapper::getPassword() const
+QString Libcntlm::getPassword() const
 {
     return password;
 }
 
-void CntlmWrapper::setPassword(const QString &value)
+void Libcntlm::setPassword(const QString &value)
 {
     password = value;
 }
 
-void CntlmWrapper::start()
+void Libcntlm::start()
 {
     if (memorizeSettings) {
         QSettings settings;
@@ -72,12 +77,12 @@ void CntlmWrapper::start()
     });
 }
 
-void CntlmWrapper::stop()
+void Libcntlm::stop()
 {
-    libcntlm::stop();
+    ccntlm::stop();
 }
 
-void CntlmWrapper::cntlm_start(QString listen, QString user, QString password, QString proxy, CntlmWrapper *instance)
+void Libcntlm::cntlm_start(QString listen, QString user, QString password, QString proxy, Libcntlm *instance)
 {
     //char * argsStr = (char*) malloc(sizeof(char) * 1024);
 //    sprintf(argsStr, "cntlm -vfl %s -u \"%s\" -p \"%s\" %s", listen.toLatin1().data(), user.toLatin1().data(), password.toLatin1().data(), proxy.toLatin1().data());
@@ -92,7 +97,7 @@ void CntlmWrapper::cntlm_start(QString listen, QString user, QString password, Q
 //    for(int i = 0; i < argc; i ++)
 //        qDebug() << cntlm_args[i];
 
-    int result = libcntlm::start(argc, cntlm_args, &errorMsg);
+    int result = ccntlm::start(argc, cntlm_args, &errorMsg);
     for(int i = 0; i < argc; i ++)
         delete(cntlm_args[i]);
     delete cntlm_args;
@@ -105,7 +110,7 @@ void CntlmWrapper::cntlm_start(QString listen, QString user, QString password, Q
     qDebug() << "ended" << result;
 }
 
-char **CntlmWrapper::QStringListToCharArray(const QStringList list)
+char **Libcntlm::QStringListToCharArray(const QStringList list)
 {
     int i =0;
     int size = list.size();
@@ -123,37 +128,47 @@ char **CntlmWrapper::QStringListToCharArray(const QStringList list)
     return c;
 }
 
-bool CntlmWrapper::getMemorizeSettings() const
+QStringList Libcntlm::getNoProxy() const
+{
+    return noProxy;
+}
+
+void Libcntlm::setNoProxy(const QStringList &value)
+{
+    noProxy = value;
+}
+
+bool Libcntlm::getMemorizeSettings() const
 {
     return memorizeSettings;
 }
 
-void CntlmWrapper::setMemorizeSettings(bool value)
+void Libcntlm::setMemorizeSettings(bool value)
 {
     memorizeSettings = value;
 }
 
-QString CntlmWrapper::getProxy() const
+QString Libcntlm::getProxy() const
 {
     return proxy;
 }
 
-void CntlmWrapper::setProxy(const QString &value)
+void Libcntlm::setProxy(const QString &value)
 {
     proxy = value;
 }
 
-QString CntlmWrapper::getListen() const
+QString Libcntlm::getListen() const
 {
     return listen;
 }
 
-void CntlmWrapper::setListen(const QString &value)
+void Libcntlm::setListen(const QString &value)
 {
     listen = value;
 }
 
-bool CntlmWrapper::getRunning() const
+bool Libcntlm::getRunning() const
 {
     return running;
 }
